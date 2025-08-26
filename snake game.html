@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Snake - Versión Final</title>
+  <link rel="stylesheet" href="Style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Snake</h1>
+
+    <div class="hud">
+      <div class="score">Puntuación: <span id="score">0</span></div>
+      <div class="best">Mejor: <span id="best">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="400" height="400" aria-label="Canvas del juego Snake"></canvas>
+
+    <div class="controls">
+      <button id="btnRestart">Reiniciar</button>
+      <label for="speedRange">Velocidad</label>
+      <input id="speedRange" type="range" min="60" max="200" step="10" value="100">
+    </div>
+
+    <footer>
+      <small>Usa las flechas ← ↑ → ↓ para mover (o WASD). High score guardado en localStorage.</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
