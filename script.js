@@ -1,5 +1,3 @@
-// Versión final: puntuación + high score + velocidad progresiva
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -35,7 +33,7 @@ function saveBest() {
 // Inicializa el juego
 function init() {
   snake = [{ x: 9 * box, y: 10 * box }]; // cabeza inicial
-  direction = 'RIGHT';
+  direction = 'LEFT'; // ahora empieza hacia la izquierda
   score = 0;
   scoreEl.textContent = score;
   placeFood();
@@ -52,7 +50,6 @@ function placeFood() {
     };
   }
   let candidate = randomCell();
-  // si la comida cae dentro de la serpiente, generar otra
   while (snake.some(part => part.x === candidate.x && part.y === candidate.y)) {
     candidate = randomCell();
   }
@@ -69,9 +66,15 @@ function draw() {
   ctx.fillStyle = 'red';
   ctx.fillRect(food.x, food.y, box, box);
 
-  // serpiente
+  // serpiente (cabeza, cuerpo, cola diferentes)
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = i === 0 ? '#2ecc71' : '#1abc9c';
+    if (i === 0) {
+      ctx.fillStyle = '#2ecc71'; // cabeza verde claro
+    } else if (i === snake.length - 1) {
+      ctx.fillStyle = '#f1c40f'; // cola amarilla
+    } else {
+      ctx.fillStyle = '#1abc9c'; // cuerpo verde más oscuro
+    }
     ctx.fillRect(snake[i].x, snake[i].y, box, box);
     ctx.strokeStyle = '#061';
     ctx.strokeRect(snake[i].x, snake[i].y, box, box);
@@ -89,7 +92,6 @@ function draw() {
   if (ateFood) {
     score += 1;
     scoreEl.textContent = score;
-    // aumenta un poco la velocidad cada 3 manzanas 
     if (score % 3 === 0 && gameSpeed > 40) {
       gameSpeed = Math.max(40, gameSpeed - 8);
       restartLoop();
@@ -108,7 +110,7 @@ function draw() {
     return;
   }
 
-  // colisión con cuerpo (desde índice 1 en adelante)
+  // colisión con cuerpo
   for (let i = 1; i < snake.length; i++) {
     if (head.x === snake[i].x && head.y === snake[i].y) {
       endGame();
@@ -117,7 +119,7 @@ function draw() {
   }
 }
 
-// Manejo de dirección (flechas y WASD)
+// Manejo de dirección
 function changeDirection(e) {
   const key = e.key;
   if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && direction !== 'RIGHT') {
@@ -134,19 +136,17 @@ function changeDirection(e) {
 // Final del juego
 function endGame() {
   clearInterval(gameInterval);
-  // actualizar best si corresponde
   if (score > best) {
     best = score;
     saveBest();
     bestEl.textContent = best;
   }
   setTimeout(() => {
-    // Mensaje simple (puedes personalizarlo)
     alert(`¡Game Over!\nPuntuación: ${score}\nMejor puntuación: ${best}`);
   }, 50);
 }
 
-// (Re)iniciar loop con la velocidad actual
+// (Re)iniciar loop
 function restartLoop() {
   if (gameInterval) clearInterval(gameInterval);
   gameInterval = setInterval(draw, gameSpeed);
