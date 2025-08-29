@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Snake - Versión Final</title>
-  <link rel="stylesheet" href="Style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="container">
@@ -15,7 +15,19 @@
       <div class="best">Mejor: <span id="best">0</span></div>
     </div>
 
-    <canvas id="gameCanvas" width="400" height="400" aria-label="Canvas del juego Snake"></canvas>
+    <div class="game-area">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+      <!-- Panel de resultado -->
+      <div id="gameOverPanel" class="panel hidden">
+        <h2>🏆 GAME OVER 🏆</h2>
+        <p>Puntuación: <span id="finalScore">0</span></p>
+        <p>Mejor: <span id="finalBest">0</span></p>
+        <div class="panel-buttons">
+          <button id="btnRestart2">🔄 Reiniciar</button>
+        </div>
+      </div>
+    </div>
 
     <div class="controls">
       <button id="btnRestart">Reiniciar</button>
