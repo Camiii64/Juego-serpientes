@@ -16,7 +16,6 @@ let gameSpeed = 300; // velocidad reducida
 const scoreEl = document.getElementById('score');
 const bestEl = document.getElementById('best');
 const btnRestart = document.getElementById('btnRestart');
-const btnRestart2 = document.getElementById('btnRestart2');
 const speedRange = document.getElementById('speedRange');
 
 // Cargar récord
@@ -38,7 +37,7 @@ function init() {
   score = 0;
   scoreEl.textContent = score;
   placeFood();
-  gameSpeed = parseInt(speedRange.value, 10);
+  gameSpeed = 260 - parseInt(speedRange.value, 10);
   document.getElementById("gameOverPanel").classList.add("hidden");
   restartLoop();
 }
@@ -143,9 +142,9 @@ function restartLoop() {
 // Listeners
 document.addEventListener('keydown', changeDirection);
 btnRestart.addEventListener('click', () => init());
-btnRestart2.addEventListener('click', () => init());
 speedRange.addEventListener('input', (e) => {
-  gameSpeed = parseInt(e.target.value, 10);
+  const val = parseInt(e.target.value, 10);
+  gameSpeed = 260 - val;
   restartLoop();
 });
 
