@@ -28,7 +28,7 @@ body{
   text-align:center;
   background:rgba(255,255,255,0.02);
   border-radius:12px;
-  padding:18px;
+  padding:30px;
   transform: scale(0.9);
   box-shadow:0 8px 30px rgba(0,0,0,0.6);
   display: flex;
@@ -51,7 +51,7 @@ h2{margin: 12px 0;
 
 .hud{
   display:flex;
-  gap:16px;
+  gap:30px;
   justify-content:center;
   margin-bottom:10px;
   font-weight:600;

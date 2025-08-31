@@ -231,10 +231,13 @@ function changeDirection(event) {
 
 // Listeners
 document.addEventListener('keydown', changeDirection);
-btnRestart.addEventListener('click', () => init());
+btnRestart.addEventListener('click', () => {
+  clearInterval(gameInterval);
+  init();
+});
 speedRange.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value, 10);
-  gameSpeed = 260 - val;
+  // Invertimos el valor: derecha = más rápido
+  gameSpeed = parseInt(e.target.max, 10) - parseInt(e.target.value, 10) + parseInt(e.target.min, 10);
   restartLoop();
 });
 
