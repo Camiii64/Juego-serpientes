@@ -16,7 +16,6 @@ let gameSpeed = 300;
 const scoreEl = document.getElementById('score');
 const bestEl = document.getElementById('best');
 const btnRestart = document.getElementById('btnRestart');
-const btnRestart2 = document.getElementById('btnRestart2');
 const speedRange = document.getElementById('speedRange');
 
 let snakeHeadColor, snakeTailColor, snakeBodyColor, strokeColor, foodColor;
@@ -46,32 +45,8 @@ function init() {
   scoreEl.textContent = score;
   placeFood();
   gameSpeed = parseInt(speedRange.value, 10);
-  document.getElementById("gameOverPanel").classList.add("hidden"); // Ocultar panel game over al iniciar
-  applyTheme();
-  clearInterval(gameInterval);
-  gameStarted = false;
-  draw();
-}
-
-// Dirección
-function changeDirection(e) {
-  const key = e.key;
-  let dirBefore = direction;
-  let newDirection = direction;
-
-  if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && direction !== 'RIGHT') newDirection = 'LEFT';
-  else if ((key === 'ArrowUp' || key === 'w' || key === 'W') && direction !== 'DOWN') newDirection = 'UP';
-  else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && direction !== 'LEFT') newDirection = 'RIGHT';
-  else if ((key === 'ArrowDown' || key === 's' || key === 'S') && direction !== 'UP') newDirection = 'DOWN';
-
-  // Iniciar movimiento solo si no había dirección aún
-  if (direction === null && newDirection !== direction) {
-    direction = newDirection;
-    restartLoop();
-    gameStarted = true;
-  } else if (newDirection !== direction && newDirection !== null) {
-    direction = newDirection;
-  }
+  document.getElementById("gameOverPanel").classList.add("hidden");
+  restartLoop();
 }
 
 // Colocar comida
@@ -238,9 +213,9 @@ themeToggleBtn.addEventListener('click', () => {
 // Listeners
 document.addEventListener('keydown', changeDirection);
 btnRestart.addEventListener('click', () => init());
-btnRestart2.addEventListener('click', () => init());
 speedRange.addEventListener('input', (e) => {
-  gameSpeed = parseInt(e.target.value, 10);
+  const val = parseInt(e.target.value, 10);
+  gameSpeed = 260 - val;
   restartLoop();
 });
 
