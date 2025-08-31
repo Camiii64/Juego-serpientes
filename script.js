@@ -88,14 +88,24 @@ function applyTheme() {
 // Inicializa
 function init() {
   snake = [{ x: 9 * box, y: 10 * box }];
-  direction = null; 
+  direction = null;
   score = 0;
   scoreEl.textContent = score;
   placeFood();
   gameSpeed = parseInt(speedRange.value, 10);
-  document.getElementById("gameOverPanel").classList.add("hidden"); 
-  gameStarted = true; 
+
+  // Ocultar modal al iniciar/reiniciar juego
+  const modal = document.getElementById('gameOverModal');
+  modal.classList.add('hidden');
+
+  gameStarted = false;
   restartLoop();
+
+  document.getElementById('closeGameOver').addEventListener('click', () => {
+  const modal = document.getElementById('gameOverModal');
+  modal.classList.add('hidden');
+  init();
+});
 }
 
 // Colocar comida
@@ -181,9 +191,10 @@ function endGame() {
     saveBest();
     bestEl.textContent = best;
   }
-  document.getElementById("finalScore").textContent = score;
-  document.getElementById("finalBest").textContent = best;
-  document.getElementById("gameOverPanel").classList.remove("hidden"); // Mostrar panel sólo en el fin
+
+  // Mostrar cuadro emergente Game Over
+  const modal = document.getElementById('gameOverModal');
+  modal.classList.remove('hidden');
 }
 
 // Bucle

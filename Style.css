@@ -78,6 +78,44 @@ canvas {
   justify-content:center;
 }
 
+#gameOverModal {
+  position: fixed; /* fijo a la ventana */
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7); /* oscurece fondo */
+  display: flex;
+  align-items: center; /* centrado vertical */
+  justify-content: center; /* centrado horizontal */
+  z-index: 9999; /* siempre arriba */
+}
+
+#gameOverModal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--panel, #222);
+  padding: 30px 50px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 20px var(--accent, #2ecc71);
+  color: var(--accent, #2ecc71);
+  font-size: 2rem;
+  font-weight: 900;
+  user-select: none;
+}
+
+.modal-content button {
+  margin-top: 20px;
+  font-size: 1rem;
+  padding: 8px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent, #2ecc71);
+  color: #021;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 button{
   background:var(--accent);
   color:#021;
