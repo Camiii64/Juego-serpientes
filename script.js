@@ -11,13 +11,20 @@ let food;
 let score = 0;
 let best = 0;
 let gameInterval = null;
-let gameSpeed = 300; // velocidad reducida
+let gameSpeed = 300; 
 
 const scoreEl = document.getElementById('score');
 const bestEl = document.getElementById('best');
 const btnRestart = document.getElementById('btnRestart');
 const btnRestart2 = document.getElementById('btnRestart2');
 const speedRange = document.getElementById('speedRange');
+
+let snakeHeadColor, snakeTailColor, snakeBodyColor, strokeColor, foodColor;
+
+let gameStarted = false;
+
+let themeIndex = 0;
+
 
 // Cargar récord
 function loadBest() {
@@ -34,13 +41,37 @@ function saveBest() {
 // Inicializa
 function init() {
   snake = [{ x: 9 * box, y: 10 * box }];
-  direction = 'LEFT';
+  direction = null; // No hay dirección inicial fija hasta que se pulse
   score = 0;
   scoreEl.textContent = score;
   placeFood();
   gameSpeed = parseInt(speedRange.value, 10);
-  document.getElementById("gameOverPanel").classList.add("hidden");
-  restartLoop();
+  document.getElementById("gameOverPanel").classList.add("hidden"); // Ocultar panel game over al iniciar
+  applyTheme();
+  clearInterval(gameInterval);
+  gameStarted = false;
+  draw();
+}
+
+// Dirección
+function changeDirection(e) {
+  const key = e.key;
+  let dirBefore = direction;
+  let newDirection = direction;
+
+  if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && direction !== 'RIGHT') newDirection = 'LEFT';
+  else if ((key === 'ArrowUp' || key === 'w' || key === 'W') && direction !== 'DOWN') newDirection = 'UP';
+  else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && direction !== 'LEFT') newDirection = 'RIGHT';
+  else if ((key === 'ArrowDown' || key === 's' || key === 'S') && direction !== 'UP') newDirection = 'DOWN';
+
+  // Iniciar movimiento solo si no había dirección aún
+  if (direction === null && newDirection !== direction) {
+    direction = newDirection;
+    restartLoop();
+    gameStarted = true;
+  } else if (newDirection !== direction && newDirection !== null) {
+    direction = newDirection;
+  }
 }
 
 // Colocar comida
@@ -60,29 +91,37 @@ function placeFood() {
 
 // Dibujo principal
 function draw() {
-  ctx.fillStyle = 'black';
+  // Fondo según tema
+  if (themeIndex === 0) ctx.fillStyle = '#000';
+  else if (themeIndex === 1) ctx.fillStyle = '#fff';
+  else ctx.fillStyle = '#001f3f';
+
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // comida
-  ctx.fillStyle = 'red';
+  // Comida
+  ctx.fillStyle = foodColor;
   ctx.fillRect(food.x, food.y, box, box);
 
-  // serpiente
+  // Serpiente
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = (i === 0) ? '#2ecc71' : (i === snake.length - 1 ? '#f1c40f' : '#1abc9c');
+    if (i === 0) ctx.fillStyle = snakeHeadColor;
+    else if (i === snake.length - 1) ctx.fillStyle = snakeTailColor;
+    else ctx.fillStyle = snakeBodyColor;
     ctx.fillRect(snake[i].x, snake[i].y, box, box);
-    ctx.strokeStyle = '#061';
+    ctx.strokeStyle = strokeColor;
     ctx.strokeRect(snake[i].x, snake[i].y, box, box);
   }
 
-  // movimiento
+  if (!gameStarted) return; // No mover la serpiente si no empezó el juego
+
+  // Movimiento
   const head = { x: snake[0].x, y: snake[0].y };
   if (direction === 'LEFT') head.x -= box;
   if (direction === 'RIGHT') head.x += box;
   if (direction === 'UP') head.y -= box;
   if (direction === 'DOWN') head.y += box;
 
-  // comer
+  // Comer
   const ateFood = head.x === food.x && head.y === food.y;
   if (ateFood) {
     score++;
@@ -95,15 +134,13 @@ function draw() {
   } else {
     snake.pop();
   }
-
   snake.unshift(head);
 
-  // colisiones
+  // Colisiones
   if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
     endGame();
     return;
   }
-
   for (let i = 1; i < snake.length; i++) {
     if (head.x === snake[i].x && head.y === snake[i].y) {
       endGame();
@@ -112,18 +149,10 @@ function draw() {
   }
 }
 
-// Dirección
-function changeDirection(e) {
-  const key = e.key;
-  if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && direction !== 'RIGHT') direction = 'LEFT';
-  else if ((key === 'ArrowUp' || key === 'w' || key === 'W') && direction !== 'DOWN') direction = 'UP';
-  else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && direction !== 'LEFT') direction = 'RIGHT';
-  else if ((key === 'ArrowDown' || key === 's' || key === 'S') && direction !== 'UP') direction = 'DOWN';
-}
-
 // Fin del juego
 function endGame() {
   clearInterval(gameInterval);
+  gameStarted = false;
   if (score > best) {
     best = score;
     saveBest();
@@ -131,7 +160,7 @@ function endGame() {
   }
   document.getElementById("finalScore").textContent = score;
   document.getElementById("finalBest").textContent = best;
-  document.getElementById("gameOverPanel").classList.remove("hidden");
+  document.getElementById("gameOverPanel").classList.remove("hidden"); // Mostrar panel solo aquí
 }
 
 // Bucle
@@ -139,6 +168,72 @@ function restartLoop() {
   if (gameInterval) clearInterval(gameInterval);
   gameInterval = setInterval(draw, gameSpeed);
 }
+
+// Botón cambio de tema
+const themeToggleBtn = document.createElement('button');
+themeToggleBtn.textContent = 'Cambiar tema';
+themeToggleBtn.style.marginLeft = '10px';
+themeToggleBtn.style.cursor = 'pointer';
+document.querySelector('.controls').appendChild(themeToggleBtn);
+
+// Aplicar tema y asignar colores para serpiente y comida según el tema
+function applyTheme() {
+  if (themeIndex === 0) {
+    // Tema oscuro
+    document.documentElement.style.setProperty('--bg', '#111');
+    document.documentElement.style.setProperty('--panel', '#161616');
+    document.documentElement.style.setProperty('--accent', '#2ecc71');
+    document.documentElement.style.setProperty('--danger', '#e74c3c');
+    document.documentElement.style.setProperty('--text', '#eee');
+    document.documentElement.style.setProperty('--muted', '#a9a9a9');
+    canvas.style.backgroundColor = '#000';
+
+    snakeHeadColor = '#2ecc71';
+    snakeTailColor = '#f1c40f';
+    snakeBodyColor = '#1abc9c';
+    strokeColor = '#061';
+    foodColor = '#e23623ff';
+
+  } else if (themeIndex === 1) {
+    // Tema claro
+    document.documentElement.style.setProperty('--bg', '#fff');
+    document.documentElement.style.setProperty('--panel', '#eee');
+    document.documentElement.style.setProperty('--accent', '#2ecc71');
+    document.documentElement.style.setProperty('--danger', '#e74c3c');
+    document.documentElement.style.setProperty('--text', '#111');
+    document.documentElement.style.setProperty('--muted', '#666');
+    canvas.style.backgroundColor = '#fff';
+
+    snakeHeadColor = '#2ecc71';
+    snakeTailColor = '#f1c40f';
+    snakeBodyColor = '#1abc9c';
+    strokeColor = '#061';
+    foodColor = '#e23623ff';
+
+  } else if (themeIndex === 2) {
+    // Tema azul (tercera opción)
+    document.documentElement.style.setProperty('--bg', '#001f3f');
+    document.documentElement.style.setProperty('--panel', '#003366');
+    document.documentElement.style.setProperty('--accent', '#2ecc71');
+    document.documentElement.style.setProperty('--danger', '#e74c3c');
+    document.documentElement.style.setProperty('--text', '#DDDDFF');
+    document.documentElement.style.setProperty('--muted', '#99AAFF');
+    canvas.style.backgroundColor = '#001f3f';
+
+    snakeHeadColor = '#2ecc71';
+    snakeTailColor = '#f1c40f';
+    snakeBodyColor = '#1abc9c';
+    strokeColor = '#061';
+    foodColor = '#e23623ff';
+  }
+}
+
+// Cambiar tema al hacer clic, rotando entre 0,1,2
+themeToggleBtn.addEventListener('click', () => {
+  themeIndex = (themeIndex + 1) % 3;
+  applyTheme();
+  draw();
+});
 
 // Listeners
 document.addEventListener('keydown', changeDirection);
