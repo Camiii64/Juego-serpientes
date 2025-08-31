@@ -12,7 +12,7 @@
 html,body{height:100%}
 body{
   margin:0;
-  background:linear-gradient(180deg,#0b0b0b,var(--panel));
+  background:linear-gradient(180deg,var(--panel));
   color:var(--text);
   font-family:Inter, "Segoe UI", Arial, sans-serif;
   display:flex;
